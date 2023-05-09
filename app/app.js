@@ -1,19 +1,19 @@
 const express = require("express");
 const app = express();
-const {getSlugAndDiscription} = require ("../controllers/get.controllers")
+const {getSlugAndDescription} = require ("../controllers/get.controllers")
 
 app.use(express.json());
 
 app.get("/api", (req, res) => {
-    res.status(200).send({ })
+    res.status(200).send({msg : "all ok" })
 })
 
-app.get("/api/topics", getSlugAndDiscription);
+app.get("/api/topics", getSlugAndDescription);
 
 
 
 app.all("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../endpoints.json"));
+    res.status(404).send({ msg : "please enter a valid url"})
 })
 
 

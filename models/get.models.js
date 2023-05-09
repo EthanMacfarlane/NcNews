@@ -1,7 +1,7 @@
 const connection = require("../db/connection");
 
 
-exports.getSlugAndDiscription = () => { 
+exports.getSlugAndDescription = () => { 
     return connection
     .query(`SELECT * FROM topics`)
         .then((topics) => {

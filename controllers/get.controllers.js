@@ -1,9 +1,8 @@
-const { getSlugAndDiscription } = require("../models/get.models");
+const { getSlugAndDescription } = require("../models/get.models");
 
-exports.getSlugAndDiscription = (req, res) => {
-  getSlugAndDiscription().then((topics) => {
+exports.getSlugAndDescription = (req, res) => {
+  getSlugAndDescription().then((topics) => {
       res.status(200).send({ topics: topics });
-      console.log (topics)
   });
     
 };
