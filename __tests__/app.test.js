@@ -46,7 +46,7 @@ describe("app", () => {
           .then((result) => {
             expect(typeof result.body.article.author).toBe("string");
             expect(typeof result.body.article.title).toBe("string");
-            expect(typeof result.body.article.article_id).toBe("number");
+            expect( result.body.article.article_id).toBe(1);
             expect(typeof result.body.article.body).toBe("string");
             expect(typeof result.body.article.topic).toBe("string");
             expect(typeof result.body.article.created_at).toBe("string");

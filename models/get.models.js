@@ -10,7 +10,7 @@ exports.getSlugAndDescription = () => {
 };
 
 
-exports.retreiveArticles = (article_id) => {
+exports.retreiveArticle = (article_id) => {
   return connection
     .query(` SELECT  *  FROM articles WHERE article_id = $1;`, [article_id])
     .then((result) => {
