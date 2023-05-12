@@ -1,4 +1,5 @@
 const connection = require("../db/connection");
+const { createCommentNumber } = require("../utils/utils");
 
 
 exports.getSlugAndDescription = () => { 
@@ -18,5 +19,15 @@ exports.retreiveArticle = (article_id) => {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
       return result.rows;
+    });
+};
+
+exports.retreiveArticles = () => {
+  return connection
+    .query(
+      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url FROM articles ORDER BY created_at DESC`
+    )
+    .then((result) => {
+      return createCommentNumber(result.rows);
     });
 };
