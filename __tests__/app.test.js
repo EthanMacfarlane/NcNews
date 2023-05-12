@@ -4,6 +4,7 @@ const connection = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
 const endpoints = require("../endpoints.json");
+require("jest-sorted");
 
 afterAll(() => {
   connection.end();
@@ -46,7 +47,7 @@ describe("app", () => {
           .then((result) => {
             expect(typeof result.body.article.author).toBe("string");
             expect(typeof result.body.article.title).toBe("string");
-            expect( result.body.article.article_id).toBe(1);
+            expect(result.body.article.article_id).toBe(1);
             expect(typeof result.body.article.body).toBe("string");
             expect(typeof result.body.article.topic).toBe("string");
             expect(typeof result.body.article.created_at).toBe("string");
@@ -56,37 +57,62 @@ describe("app", () => {
       });
     });
   });
+  describe("/api/articles", () => {
+    test("GET: 200, responds with an array of articles", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((result) => {
+          expect(result.body.articles.length).toBe(12);
+          expect(result.body.articles[0].comment_count).toBe(2);
+          expect(result.body.articles).toBeSortedBy("created_at", {
+            descending: true,
+            coerce: true,
+          });
+          result.body.articles.forEach((article) => {
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.comment_count).toBe("number");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.votes).toBe("number");
+            expect(typeof article.article_img_url).toBe("string");
+          });
+        });
+    });
 
-  describe("error handeling ", () => {
-    describe("/api/INVALID ", () => {
-      test("when and url is invalid, respond with a 404", () => {
+    describe("error handeling ", () => {
+      describe("/api/INVALID ", () => {
+        test("when and url is invalid, respond with a 404", () => {
+          return request(app)
+            .get("/api/setirsti")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("please enter a valid url");
+            });
+        });
+      });
+    });
+    describe("/api/articles/INVALID", () => {
+      test('status 400 responds with error message "Bad request!"', () => {
         return request(app)
-          .get("/api/setirsti")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("please enter a valid url");
+          .get("/api/articles/nonsense")
+          .expect(400)
+          .then((result) => {
+            expect(result.body.msg).toBe("Bad request!");
           });
       });
     });
-  });
-  describe("/api/articles/INVALID", () => {
-    test('status 400 responds with error message "Bad request!"', () => {
-      return request(app)
-        .get("/api/articles/nonsense")
-        .expect(400)
-        .then((result) => {
-          expect(result.body.msg).toBe("Bad request!");
-        });
-    });
-  });
-  describe("/api/articles/2000000", () => {
-    test('status 404 responds with error message "Not found!"', () => {
-      return request(app)
-        .get("/api/articles/200000")
-        .expect(404)
-        .then((result) => {
-          expect(result.body.msg).toBe("Not found!");
-        });
+    describe("/api/articles/2000000", () => {
+      test('status 404 responds with error message "Not found!"', () => {
+        return request(app)
+          .get("/api/articles/200000")
+          .expect(404)
+          .then((result) => {
+            expect(result.body.msg).toBe("Not found!");
+          });
+      });
     });
   });
 });
